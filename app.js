@@ -46,7 +46,7 @@ function deleted(e) {
 
     } else {
         const info = item.parentElement;
-        info.classList.remove('incomplete-')
+        info.classList.remove('incomplete')
         info.classList.add('done')
 
     }
