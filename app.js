@@ -37,6 +37,7 @@ function deleted(e) {
     console.log(a)
 
     if (item.classList[0] === 'delete') {
+        item.parentElement.classList.remove('incomplete')
         item.parentElement.classList.add('fall')
         const info = item.parentElement;
         info.addEventListener('transitionend', function() {
@@ -45,7 +46,7 @@ function deleted(e) {
 
     } else {
         const info = item.parentElement;
-        info.classList.remove('incomplete')
+        info.classList.remove('incomplete-')
         info.classList.add('done')
 
     }
