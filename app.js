@@ -2,13 +2,14 @@ const input = document.querySelector('#informationInput');
 const submit = document.querySelector('.submit');
 const screen = document.querySelector('.display');
 
+const filtration = document.querySelector('.filtration');
 
+filtration.addEventListener('click', filterInformation)
 
 submit.addEventListener('click', collectInformation)
     //deleteButton.addEventListener('click', deleted)
 
-
-let updatedData = true;
+screen.childNodes[0].remove();
 
 
 const data = [
@@ -22,48 +23,88 @@ function collectInformation() {
     if (input.value === '') {
         console.log('input is empty')
     } else {
-        updatedData = true;
         data.push({ text: input.value })
-        console.log(data)
-        const ul = document.createElement('ul');
-        const a = document.createElement('a');
-        a.innerText = input.value;
-        const deleteButton = document.createElement('button')
-        deleteButton.classList.add('delete')
-        deleteButton.innerText = 'x'
-        deleteButton.addEventListener('click', deleted)
-        a.append(deleteButton)
-        ul.appendChild(a)
-        screen.appendChild(ul);
-        ul.style.margin = '2rem';
+        createInformationContainer(input.value)
+        input.value = '';
 
 
     }
 };
 
 function deleted(e) {
-    console.log(e)
     const item = e.target;
+    const a = item.parentElement
+    console.log(a)
+
     if (item.classList[0] === 'delete') {
+        item.parentElement.classList.add('fall')
         const info = item.parentElement;
-        info.remove();
+        info.addEventListener('transitionend', function() {
+            info.remove()
+        })
+
+    } else {
+        const info = item.parentElement;
+        info.classList.remove('incomplete')
+        info.classList.add('done')
+
     }
 };
 
-
-data.forEach(function(element) {
-    const ul = document.createElement('ul');
+function createInformationContainer(data) {
+    //create delete button
     const deleteButton = document.createElement('button')
     deleteButton.classList.add('delete')
     deleteButton.innerText = 'x'
     deleteButton.addEventListener('click', deleted)
-    ul.style.margin = '2rem';
-    const a = document.createElement('a');
-    a.innerText = element.text
-    a.append(deleteButton)
-    ul.appendChild(a)
-    screen.appendChild(ul);
-    //ul.innerHTML =
-    //`<a>${element.text} <button class='completed'>+</button></a>`
 
+    //create completed button
+    const completedButton = document.createElement('button')
+    completedButton.classList.add('completed')
+    completedButton.innerText = '+'
+    completedButton.addEventListener('click', deleted)
+
+    //create container
+    const a = document.createElement('a');
+    a.classList.add('incomplete')
+    a.innerText = data + ' ';
+
+    //appending to the 'a' container
+    a.append(completedButton)
+    a.append(deleteButton)
+    screen.appendChild(a);
+
+}
+
+
+data.forEach(function(element) {
+    createInformationContainer(element.text)
 });
+
+function filterInformation(e) {
+
+    const information = screen.childNodes;
+    information.forEach(function(element) {
+        switch (e.target.value) {
+            case "all":
+                element.style.display = "block"
+                break;
+            case "complete":
+                if (element.classList.contains("done")) {
+                    element.style.display = "block";
+                } else {
+                    element.style.display = "none";
+                }
+                break
+            case "incomplete":
+                console.log(e.target.value)
+                console.log(element.classList)
+                if (element.classList.contains("incomplete")) {
+                    element.style.display = "block";
+                } else {
+                    element.style.display = "none";
+                }
+                break
+        }
+    });
+}
