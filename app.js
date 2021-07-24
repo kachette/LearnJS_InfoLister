@@ -4,27 +4,28 @@ const screen = document.querySelector('.display');
 
 const filtration = document.querySelector('.filtration');
 
+document.addEventListener('DOMContentLoaded', getInformation)
 filtration.addEventListener('click', filterInformation)
-
 submit.addEventListener('click', collectInformation)
     //deleteButton.addEventListener('click', deleted)
 
 screen.childNodes[0].remove();
 
 
-const data = [
-    { text: 'I want to be free' },
-    { text: 'Become stronger physically' },
-    { text: 'Read a book a day' }
-];
+//const data = [
+//{ text: 'I want to be free' },
+//{ text: 'Become stronger physically' },
+//{ text: 'Read a book a day' }
+//];
 
 
 function collectInformation() {
     if (input.value === '') {
         console.log('input is empty')
     } else {
-        data.push({ text: input.value })
-        createInformationContainer(input.value)
+        saveLocalInformation(input.value)
+            //data.push({ text: input.value })
+            //createInformationContainer(input.value)
         input.value = '';
 
 
@@ -37,6 +38,7 @@ function deleted(e) {
     console.log(a)
 
     if (item.classList[0] === 'delete') {
+        removeLocalInformation(a)
         item.parentElement.classList.remove('incomplete')
         item.parentElement.classList.add('fall')
         const info = item.parentElement;
@@ -68,9 +70,11 @@ function createInformationContainer(data) {
     //create container
     const a = document.createElement('a');
     a.classList.add('incomplete')
-    a.innerText = data + ' ';
+    const text = document.createElement('h4');
+    text.innerText = data + ' ';
 
     //appending to the 'a' container
+    a.appendChild(text)
     a.append(completedButton)
     a.append(deleteButton)
     screen.appendChild(a);
@@ -78,9 +82,9 @@ function createInformationContainer(data) {
 }
 
 
-data.forEach(function(element) {
-    createInformationContainer(element.text)
-});
+//data.forEach(function(element) {
+//createInformationContainer(element.text)
+//});
 
 function filterInformation(e) {
 
@@ -108,4 +112,41 @@ function filterInformation(e) {
                 break
         }
     });
+}
+
+function saveLocalInformation(input) {
+    //check for the existing information
+    let list;
+    if (localStorage.getItem('list') === null) {
+        list = []
+    } else {
+        list = JSON.parse(localStorage.getItem('list'));
+    }
+    list.push(input);
+    localStorage.setItem('list', JSON.stringify(list));
+}
+
+function getInformation() {
+    //check for the existing information
+    if (localStorage.getItem('list') === null) {
+        list = []
+    } else {
+        list = JSON.parse(localStorage.getItem('list'));
+    }
+    list.forEach(function(element) {
+        console.log(element)
+        createInformationContainer(element)
+
+    })
+}
+
+function removeLocalInformation(data) {
+    if (localStorage.getItem('list') === null) {
+        list = []
+    } else {
+        list = JSON.parse(localStorage.getItem('list'));
+    }
+    let value = data.children[0].innerText;
+    list.splice(list.indexOf(value), 1)
+    localStorage.setItem('list', JSON.stringify(list))
 }
